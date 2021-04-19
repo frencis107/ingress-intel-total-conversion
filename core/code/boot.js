@@ -291,8 +291,6 @@ function boot() {
   window.setupTooltips();
   window.chat.setup();
   window.portalDetail.setup();
-  window.setupLayerChooserSelectOne();
-  window.setupLayerChooserStatusRecorder();
   window.setupLayerChooserApi();
 
   // read here ONCE, so the URL is only evaluated one time after the
