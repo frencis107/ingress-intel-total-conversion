@@ -21,6 +21,7 @@ var LayerChooser = L.Control.Layers.extend({
         log.error(e);
       }
     }
+    window.overlayStatus = this._overlayStatus; // compatibility
     this._mapToAdd = options && options.map;
     L.Control.Layers.prototype.initialize.apply(this, arguments);
   },
@@ -208,7 +209,7 @@ if (typeof android !== 'undefined' && android && android.setLayers) {
 
 // contains current status(on/off) of overlay layerGroups.
 // !!deprecated: use `map.hasLayer` instead (https://leafletjs.com/reference.html#map-haslayer)
-// window.overlayStatus = window.layerChooser._overlayStatus;
+// window.overlayStatus = window.layerChooser._overlayStatus; // to be set in constructor
 
 // Reads recorded layerGroup status (as it may not be added to map yet),
 // return `defaultDisplay` if no record found.
