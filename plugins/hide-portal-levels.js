@@ -32,8 +32,9 @@ function setup () {
   }
 
   hideLevels.expand = function () {
+    var enable = !!this._map;
     levels.forEach(function (el) {
-      ctrl.addOverlay(el.layer, el.name);
+      ctrl.addOverlay(el.layer, el.name, {enable: enable});
     });
     hideLevels.portals._layers = {};
     ctrl.removeLayer(hideLevels.portals);
@@ -49,12 +50,6 @@ function setup () {
   hideLevels.portals.on('longclick', function (e) { // expand
     e.preventDefault();
     hideLevels.expand();
-  });
-
-  hideLevels.portals.on('add remove', function (e) { // store status
-    levels.forEach(function (el) {
-      ctrl._storeOverlayState(el.layer._name, e.type === 'add'); //??
-    });
   });
 
   if (hideLevels.initCollapsed) {

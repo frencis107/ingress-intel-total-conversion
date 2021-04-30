@@ -22,12 +22,6 @@ function setup () {
       this._ctrl = window.layerChooser;
       this._allLayers = [];
       if (match) { this.addLayers(match); }
-
-      this.on('add remove', function (e) { // store status
-        this.eachLayer(function (layer) {
-          this._storeOverlayState(layer._name, e.type === 'add'); //??
-        }, this._ctrl);
-      });
     },
 
     addLayers: function (match) {
@@ -80,14 +74,14 @@ function setup () {
         label =  this._name + ' [' + disabled.length + ']';
         label = '<i>' + label + '</i>';
       }
-      this.options.defaultDisabled = disabled.all; // todo
-      this._ctrl.addOverlay(this, label ||  this._name);
+      this._ctrl.addOverlay(this, label ||  this._name, {enable: !disabled.all});
       return this.fire('collapse');
     },
 
     _expand:  function () {
+      var enable = !!this._map;
       this._allLayers.forEach(function (el) {
-        this._ctrl.addOverlay(el.layer, el.name);
+        this._ctrl.addOverlay(el.layer, el.name, {enable: enable});
       }, this);
       this._layers = {};
       this._ctrl.removeLayer(this);
