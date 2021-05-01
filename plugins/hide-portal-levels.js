@@ -14,25 +14,28 @@ hideLevels.initCollapsed = true;
 function setup () {
   var ctrl = window.layerChooser;
 
-  hideLevels.portals = L.layerGroup(null, {
-    notPersistent: true,
-    sortPriority: -1000
-  });
+  hideLevels.portals = L.layerGroup();
 
   var levels = window.layerChooser._layers.filter(function (el) {
     return el.overlay && el.layer._name.endsWith('Portals');
   });
 
   hideLevels.collapse = function () {
-    ctrl.addOverlay(hideLevels.portals, 'Portals');
+    var allDisabled = true;
     levels.forEach(function (info) {
+      allDisabled = allDisabled && !info.layer._map;
       ctrl.removeLayer(info.layer, 'keepOnMap');
       hideLevels.portals.addLayer(info.layer);
+    });
+    ctrl.addOverlay(hideLevels.portals, 'Portals', {
+      persistent: false,
+      sortPriority: -1000,
+      enable: !allDisabled
     });
   }
 
   hideLevels.expand = function () {
-    var enable = !!this._map;
+    var enable = !!hideLevels.portals._map;
     levels.forEach(function (el) {
       ctrl.addOverlay(el.layer, el.name, {enable: enable});
     });

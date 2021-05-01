@@ -15,7 +15,6 @@ function setup () {
   var CollapsibleLayers = L.LayerGroup.extend({
     initialize: function (match, options) {
       options = options || {};
-      options.notPersistent = true;
       L.LayerGroup.prototype.initialize.call(this, null, options);
 
       this._name = options.name || match;
@@ -64,6 +63,14 @@ function setup () {
           e.preventDefault();
           var map = e.control._map;
           disabled.forEach(map.addLayer, map);
+          disabled.forEach(this.addLayer, this);
+          /*??
+          disabled.forEach(function (layer) {
+            map.addLayer(layer);
+            this.addLayer(layer);
+            e.control._storeOverlayState(layer._name, true);
+          }, this);
+          */
           // restore name
           e.control.setLabel(this, this._name);
         };
@@ -74,14 +81,17 @@ function setup () {
         label =  this._name + ' [' + disabled.length + ']';
         label = '<i>' + label + '</i>';
       }
-      this._ctrl.addOverlay(this, label ||  this._name, {enable: !disabled.all});
+      this._ctrl.addOverlay(this, label ||  this._name, {
+        enable: !disabled.all,
+        permanent: false,
+        sortPriority: this.options.sortPriority
+      });
       return this.fire('collapse');
     },
 
     _expand:  function () {
-      var enable = !!this._map;
       this._allLayers.forEach(function (el) {
-        this._ctrl.addOverlay(el.layer, el.name, {enable: enable});
+        this._ctrl.addOverlay(el.layer, el.name, {default: el.layer._map});
       }, this);
       this._layers = {};
       this._ctrl.removeLayer(this);
@@ -108,6 +118,7 @@ function setup () {
   })
     .addLayers('Beacons')
     .addLayers('Frackers')
+    .addLayers('Artifacts')
     .bindTo('Resistance', 'Enlightened')
     .toggle(collapsibleLayers.initial);
 }

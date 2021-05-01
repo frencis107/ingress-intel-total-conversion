@@ -397,8 +397,8 @@ window.plugin.flyLinks.Triangle = function(a, b, c, depth) {
 }
 
 window.plugin.flyLinks.setup = function() {
-  window.plugin.flyLinks.linksLayerGroup = L.layerGroup(null, {defaultDisabled: true});
-  window.plugin.flyLinks.fieldsLayerGroup = L.layerGroup(null, {defaultDisabled: true});
+  window.plugin.flyLinks.linksLayerGroup = new L.LayerGroup();
+  window.plugin.flyLinks.fieldsLayerGroup = new L.LayerGroup();
   
   window.addHook('mapDataRefreshEnd', function(e) {
     window.plugin.flyLinks.updateLayer();
@@ -408,7 +408,7 @@ window.plugin.flyLinks.setup = function() {
     window.plugin.flyLinks.updateLayer();
   });
 
-  window.layerChooser.addOverlay(window.plugin.flyLinks.linksLayerGroup, 'Fly links');
-  window.layerChooser.addOverlay(window.plugin.flyLinks.fieldsLayerGroup, 'Fly fields');
+  window.layerChooser.addOverlay(window.plugin.flyLinks.linksLayerGroup, 'Fly links', {default: false});
+  window.layerChooser.addOverlay(window.plugin.flyLinks.fieldsLayerGroup, 'Fly fields', {default: false});
 }
 var setup = window.plugin.flyLinks.setup;
