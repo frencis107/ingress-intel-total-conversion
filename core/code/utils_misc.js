@@ -106,15 +106,6 @@ window.aboutIITC = function () {
   });
 }
 
-
-window.layerGroupLength = function(layerGroup) {
-  var layersCount = 0;
-  var layers = layerGroup._layers;
-  if (layers)
-    layersCount = Object.keys(layers).length;
-  return layersCount;
-}
-
 // retrieves parameter from the URL?query=string.
 window.getURLParam = function(param) {
   var items = window.location.search.substr(1).split('&');
@@ -313,25 +304,6 @@ window.selectPortalByLatLng = function(lat, lng) {
   map.setView(urlPortalLL, DEFAULT_ZOOM);
 };
 
-String.prototype.capitalize = function() {
-    return this.charAt(0).toUpperCase() + this.slice(1).toLowerCase();
-}
-
-// http://stackoverflow.com/a/646643/1684530 by Bergi and CMS
-if (typeof String.prototype.startsWith !== 'function') {
-  String.prototype.startsWith = function (str){
-    return this.slice(0, str.length) === str;
-  };
-}
-
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/trunc#polyfill
-// (required for KitKat support)
-if (!Math.trunc) {
-  Math.trunc = function (v) {
-    return v < 0 ? Math.ceil(v) : Math.floor(v);
-  };
-}
-
 // escape a javascript string, so quotes and backslashes are escaped with a backslash
 // (for strings passed as parameters to html onclick="..." for example)
 window.escapeJavascriptString = function(str) {
@@ -408,53 +380,6 @@ window.calcTriArea = function(p) {
   return Math.abs((p[0].lat*(p[1].lng-p[2].lng)+p[1].lat*(p[2].lng-p[0].lng)+p[2].lat*(p[0].lng-p[1].lng))/2);
 }
 
-// Update layerGroups display status to window.overlayStatus and localStorage 'ingress.intelmap.layergroupdisplayed'
-window.updateDisplayedLayerGroup = function(name, display) {
-  overlayStatus[name] = display;
-  localStorage['ingress.intelmap.layergroupdisplayed'] = JSON.stringify(overlayStatus);
-}
-
-// Read layerGroup status from window.overlayStatus if it was added to map,
-// read from cookie if it has not added to map yet.
-// return 'defaultDisplay' if both overlayStatus and cookie didn't have the record
-window.isLayerGroupDisplayed = function(name, defaultDisplay) {
-  if(typeof(overlayStatus[name]) !== 'undefined') return overlayStatus[name];
-
-  convertCookieToLocalStorage('ingress.intelmap.layergroupdisplayed');
-  var layersJSON = localStorage['ingress.intelmap.layergroupdisplayed'];
-  if(!layersJSON) return defaultDisplay;
-
-  var layers = JSON.parse(layersJSON);
-  // keep latest overlayStatus
-  overlayStatus = $.extend(layers, overlayStatus);
-  if(typeof(overlayStatus[name]) === 'undefined') return defaultDisplay;
-  return overlayStatus[name];
-}
-
-window.addLayerGroup = function(name, layerGroup, defaultDisplay) {
-  if (defaultDisplay === undefined) defaultDisplay = true;
-
-  if(isLayerGroupDisplayed(name, defaultDisplay)) map.addLayer(layerGroup);
-  layerChooser.addOverlay(layerGroup, name);
-}
-
-window.removeLayerGroup = function(layerGroup) {
-  function find (arr, callback) { // ES5 doesn't include Array.prototype.find()
-    for (var i=0; i<arr.length; i++) {
-      if (callback(arr[i], i, arr)) { return arr[i]; }
-    }
-  }
-  var element = find(layerChooser._layers, function (el) { return el.layer === layerGroup; });
-  if (!element) {
-    throw new Error('Layer was not found');
-  }
-  // removing the layer will set it's default visibility to false (store if layer gets added again)
-  var enabled = isLayerGroupDisplayed(element.name);
-  map.removeLayer(layerGroup);
-  layerChooser.removeLayer(layerGroup);
-  updateDisplayedLayerGroup(element.name, enabled);
-};
-
 function clamp (n,max,min) {
   if (n===0) { return 0; }
   return n>0 ? Math.min(n,max) : Math.max(n,min);
@@ -517,3 +442,120 @@ window.androidPermalink = function() { // deprecated
 }
 
 // todo refactor main.js to get rid of setPermaLink and androidPermalink
+
+Object.defineProperty(String.prototype, 'capitalize', {
+  value: function() {
+    return this.charAt(0).toUpperCase() + this.slice(1).toLowerCase();
+  }
+});
+
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/startsWith#polyfill
+if (!String.prototype.startsWith) {
+  Object.defineProperty(String.prototype, 'startsWith', {
+    value: function(search, rawPos) {
+      var pos = rawPos > 0 ? rawPos|0 : 0;
+      return this.substring(pos, pos + search.length) === search;
+    }
+  });
+}
+
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/trunc#polyfill
+// (required for KitKat support)
+if (!Math.trunc) {
+  Math.trunc = function (v) {
+    return v < 0 ? Math.ceil(v) : Math.floor(v);
+  };
+}
+
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find#polyfill
+// https://tc39.github.io/ecma262/#sec-array.prototype.find
+if (!Array.prototype.find) {
+  Object.defineProperty(Array.prototype, 'find', {
+    value: function(predicate) {
+      // 1. Let O be ? ToObject(this value).
+      if (this == null) {
+        throw TypeError('"this" is null or not defined');
+      }
+
+      var o = Object(this);
+
+      // 2. Let len be ? ToLength(? Get(O, "length")).
+      var len = o.length >>> 0;
+
+      // 3. If IsCallable(predicate) is false, throw a TypeError exception.
+      if (typeof predicate !== 'function') {
+        throw TypeError('predicate must be a function');
+      }
+
+      // 4. If thisArg was supplied, let T be thisArg; else let T be undefined.
+      var thisArg = arguments[1];
+
+      // 5. Let k be 0.
+      var k = 0;
+
+      // 6. Repeat, while k < len
+      while (k < len) {
+        // a. Let Pk be ! ToString(k).
+        // b. Let kValue be ? Get(O, Pk).
+        // c. Let testResult be ToBoolean(? Call(predicate, T, « kValue, k, O »)).
+        // d. If testResult is true, return kValue.
+        var kValue = o[k];
+        if (predicate.call(thisArg, kValue, k, o)) {
+          return kValue;
+        }
+        // e. Increase k by 1.
+        k++;
+      }
+
+      // 7. Return undefined.
+      return undefined;
+    },
+    configurable: true,
+    writable: true
+  });
+}
+
+// adapted from https://github.com/jsPolyfill/Array.prototype.findIndex/blob/master/findIndex.js
+// https://tc39.es/ecma262/multipage/indexed-collections.html#sec-array.prototype.findindex
+if (!Array.prototype.findIndex) {
+  Object.defineProperty(Array.prototype, 'findIndex', {
+    value: function(callback) {
+      if (this === null) {
+        throw new TypeError('Array.prototype.findIndex called on null or undefined');
+      } else if (typeof callback !== 'function') {
+        throw new TypeError('callback must be a function');
+      }
+      var list = Object(this);
+      // Makes sures is always has an positive integer as length.
+      var length = list.length >>> 0;
+      var thisArg = arguments[1];
+      for (var i = 0; i < length; i++) {
+        if ( callback.call(thisArg, list[i], i, list) ) {
+          return i;
+        }
+      }
+      return -1;
+    },
+    configurable: true,
+    writable: true
+  });
+}
+
+// https://developer.mozilla.org/en-US/docs/Web/API/Element/closest#polyfill
+if (!Element.prototype.matches) {
+  Element.prototype.matches =
+    Element.prototype.msMatchesSelector ||
+    Element.prototype.webkitMatchesSelector;
+}
+
+if (!Element.prototype.closest) {
+  Element.prototype.closest = function(s) {
+    var el = this;
+
+    do {
+      if (Element.prototype.matches.call(el, s)) return el;
+      el = el.parentElement || el.parentNode;
+    } while (el !== null && el.nodeType === 1);
+    return null;
+  };
+}

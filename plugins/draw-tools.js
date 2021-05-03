@@ -635,7 +635,7 @@ window.plugin.drawTools.boot = function() {
   plugin.drawTools.addDrawControl();
   window.plugin.drawTools.setDrawColor(window.plugin.drawTools.currentColor);
 
-  //start off hidden. if the layer is enabled, the below addLayerGroup will add it, triggering a 'show'
+  //start off hidden. if the layer is enabled, the below layerChooser.addOverlay will add it, triggering a 'show'
   $('.leaflet-draw-section').hide();
 
 
@@ -652,7 +652,7 @@ window.plugin.drawTools.boot = function() {
   });
 
   //add the layer
-  window.addLayerGroup('Drawn Items', window.plugin.drawTools.drawnItems, true);
+  window.layerChooser.addOverlay(window.plugin.drawTools.drawnItems, 'Drawn Items');
 
   //place created items into the specific layer
   map.on('draw:created', function(e) {
@@ -714,10 +714,10 @@ window.plugin.drawTools.initMPE = function(){
       window.plugin.drawTools.load();
       console.log('DRAWTOOLS: reset all drawn items (func_post)');
 
-      if (window.plugin.crossLinks !== undefined && window.overlayStatus['Cross Links']) {
+      if (window.plugin.crossLinks) {
         window.plugin.crossLinks.checkAllLinks();
 
-        if (window.plugin.destroyedLinks !== undefined && window.overlayStatus['Destroyed Links Simulator']){
+        if (window.plugin.destroyedLinks) {
           window.plugin.destroyedLinks.cross.removeCrossAll();
         }
       }
