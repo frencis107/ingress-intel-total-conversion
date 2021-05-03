@@ -17,7 +17,7 @@ function setup () {
   hideLevels.portals = L.layerGroup();
 
   var levels = window.layerChooser._layers.filter(function (el) {
-    return el.overlay && el.layer._name.endsWith('Portals');
+    return el.overlay && el.layer._chooser.name.endsWith('Portals');
   });
 
   hideLevels.collapse = function () {

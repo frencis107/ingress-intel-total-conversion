@@ -25,7 +25,7 @@ function setup () {
 
     addLayers: function (match) {
       this._allLayers = this._ctrl._layers.filter(function (el) {
-        return el.overlay && el.layer._name.endsWith(match);
+        return el.overlay && el.layer._chooser.name.endsWith(match);
       }).concat(this._allLayers);
       return this;
     },
@@ -68,7 +68,7 @@ function setup () {
           disabled.forEach(function (layer) {
             map.addLayer(layer);
             this.addLayer(layer);
-            e.control._storeOverlayState(layer._name, true);
+            e.control._storeOverlayState(layer._chooser.name, true);
           }, this);
           */
           // restore name
