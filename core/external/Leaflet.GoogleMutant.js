@@ -420,12 +420,11 @@
 			}
 
 			waitForAPI(function () {
-				this$1._initMutant();
-
-				map = this$1._map;
-				if (!map) {
+				if (this$1._map) {
 					return;
 				}
+				this$1._initMutant();
+
 				//handle layer being added to a map for which there are no Google tiles at the given zoom
 				google.maps.event.addListenerOnce(this$1._mutant, "idle", function () {
 					if (!this$1._map) {
@@ -518,6 +517,7 @@
 			var this$1 = this;
 
 			if (this._mutant) {
+				this._update();
 				return;
 			}
 
