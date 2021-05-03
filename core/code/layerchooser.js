@@ -59,7 +59,6 @@ var LayerChooser = L.Control.Layers.extend({
     } else {
       label = label || data.label || data.name;
     }
-    L.Control.Layers.prototype._addLayer.call(this, layer, label, overlay);
     // provide stable sort order
     if ('sortPriority' in options) {
       data.sortPriority = options.sortPriority;
@@ -67,6 +66,7 @@ var LayerChooser = L.Control.Layers.extend({
       this._lastPriority = this._lastPriority + 10;
       data.sortPriority = this._lastPriority;
     }
+    L.Control.Layers.prototype._addLayer.call(this, layer, label, overlay);
     if (data.overlay) {
       data.default = 'default' in options ? options.default : true;
     }
