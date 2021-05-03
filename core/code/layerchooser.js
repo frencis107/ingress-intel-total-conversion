@@ -63,7 +63,7 @@ var LayerChooser = L.Control.Layers.extend({
     // provide stable sort order
     if ('sortPriority' in options) {
       data.sortPriority = options.sortPriority;
-    } else if (!('_sortPriority' in layer)) {
+    } else if (!('sortPriority' in data)) {
       this._lastPriority = this._lastPriority + 10;
       data.sortPriority = this._lastPriority;
     }
