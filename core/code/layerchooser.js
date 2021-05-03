@@ -128,18 +128,22 @@ var LayerChooser = L.Control.Layers.extend({
   // @method removeLayer(layer: Layer|String, keepOnMap?: Boolean): this
   // Removes the given layer from the control.
   // Either layer object or it's name in the control must be specified.
-  // Layer is removed from the map as well, except `keepOnMap` argument is true. // todo?? {keepOnMap: true}
-  removeLayer: function (layer, keepOnMap) {
+  // Layer is removed from the map as well, except `keepOnMap` argument is true. // todo
+  removeLayer: function (layer, options) {
     layer = this.getLayer(layer);
     if (layer) {
+      options = options || {};
       var data = layer._chooser;
       if (data.statusTracking) {
         layer.off('add remove', data.statusTracking, this);
         delete data.statusTracking;
       }
       L.Control.Layers.prototype.removeLayer.apply(this, arguments);
-      if (this._map && !keepOnMap) {
+      if (this._map && !options.keepOnMap) {//todo doc
         map.removeLayer(layer);
+      }
+      if (!options.keepData) {//todo doc
+        delete layer._chooser;
       }
     } else {
       log.warn('Layer not found');

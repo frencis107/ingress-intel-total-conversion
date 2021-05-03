@@ -43,7 +43,7 @@ function setup () {
     _collapse:  function () {
       var disabled = [];
       this._allLayers.forEach(function (el) {
-        this._ctrl.removeLayer(el.layer, 'keepOnMap');
+        this._ctrl.removeLayer(el.layer, {keepOnMap: true, keepData: true});
         if (el.layer._map) {
           this.addLayer(el.layer);
         } else {

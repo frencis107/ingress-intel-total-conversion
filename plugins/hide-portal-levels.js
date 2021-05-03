@@ -24,7 +24,7 @@ function setup () {
     var allDisabled = true;
     levels.forEach(function (info) {
       allDisabled = allDisabled && !info.layer._map;
-      ctrl.removeLayer(info.layer, 'keepOnMap');
+      ctrl.removeLayer(info.layer, {keepOnMap: true, keepData: true});
       hideLevels.portals.addLayer(info.layer);
     });
     ctrl.addOverlay(hideLevels.portals, 'Portals', {

@@ -13,7 +13,7 @@ removeExtraLayers.names = ['Artifacts', 'Beacons', 'Frackers'];
 
 function setup () {
   removeExtraLayers.names.forEach(function (name) {
-    window.layerChooser.removeLayer(name, 'keepOnMap');
+    window.layerChooser.removeLayer(name, {keepOnMap: true});
   });
 }
 
