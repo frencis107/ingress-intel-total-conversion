@@ -1,8 +1,8 @@
 ﻿// @author         johnd0e
-// @name           Gaode (高德地图) / AutoNavi map
+// @name           Amap (高德地图) / AutoNavi map
 // @category       Map Tiles
-// @version        0.1.0
-// @description    Map layers from AutoNavi / Gaode (高德地图)
+// @version        0.1.1
+// @description    Map layers from AutoNavi / Amap (高德地图)
 
 
 function setup () {
@@ -18,7 +18,7 @@ function setup () {
     options: {
       subdomains: '1234',
       minZoom: 3,
-      maxZoom: 20,
+      maxZoom: 19,
       maxNativeZoom: 18,
       //detectRetina: true,
       type: 'roads',
@@ -57,26 +57,26 @@ function setup () {
   }
 
   var Roads = // en, zh_en
-    add('Gaode Roads [zh]',  new GaodeLayer({ style: 7, maxNativeZoom: 20, lang: 'zh_cn' }));
-
+  //add('Gaode Roads [zh]',  new GaodeLayer({ style: 7, maxNativeZoom: 20, lang: 'zh_cn' }));
   //add('Gaode Roads',       new GaodeLayer({ style: 7, maxNativeZoom: 20 }));
   //add('Gaode Roads 7',     new GaodeLayer({ style: 7, site: 1 }));
-  //add('Gaode Roads 8',     new GaodeLayer({ style: 8, site: 1 }));
+  add('Amap Roads', new GaodeLayer({ style: 8, site: 1, maxNativeZoom: 18, lang: 'zh_cn' }));
   //add('Gaode Roads 8 [zh]',new GaodeLayer({ style: 8, site: 1, lang: 'zh_cn' }));
 
-  add('Gaode Roads + Traffic', L.layerGroup([
+  add('Amap Roads + Traffic', L.layerGroup([
     Roads,
-    new AmapTraffic({ opacity: 0.75 })
+    new AmapTraffic({ opacity: 0.66 })
   ]));
 
   var Satellite =
-    add('Gaode Satellite', new GaodeLayer({ style: 6, type: 'satellite' }));
+    add('Amap Satellite', new GaodeLayer({ style: 6, type: 'satellite' }));
 
-  add('Gaode Hybrid', L.layerGroup([
+  add('Amap Hybrid', L.layerGroup([
     Satellite,
-    new GaodeLayer({ style: 8, type: 'roadnet', opacity: 0.75 })
-
+    new GaodeLayer({ style: 8, type: 'roadnet', opacity: 0.9 })
     //new GaodeLayer({ style: 8, type: 'roadnet', opacity: 0.75, lang: 'zh_cn', scl: 2 }), // (512*512 tile, w/o labels)
     //new GaodeLayer({ style: 8, type: 'labels', opacity: 0.75, lang: 'zh_cn', ltype: 4 }) // (feature mask) here: 2: roads, 4: labels)
   ]));
+
+  add('Amap Roads HD', new GaodeLayer({ style: 7, maxNativeZoom: 18, detectRetina: true, lang: 'zh_cn' }));
 }
