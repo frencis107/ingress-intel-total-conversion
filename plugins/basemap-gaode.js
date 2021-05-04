@@ -79,4 +79,6 @@ function setup () {
   ]));
 
   add('Amap Roads HD', new GaodeLayer({ style: 7, maxNativeZoom: 18, detectRetina: true, lang: 'zh_cn' }));
+
+  add('Amap Roads HD Max', new GaodeLayer({ style: 7, maxNativeZoom: 20, lang: 'zh_cn' }));
 }
